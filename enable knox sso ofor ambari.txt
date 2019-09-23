@@ -1,0 +1,96 @@
+Setting up Knox SSO for Ambari
+
+[root@saurabh-ambari ~]# openssl s_client -connect saurabh-1.example.com:8443
+CONNECTED(00000003)
+depth=0 C = US, ST = Test, L = Test, O = Hadoop, OU = Test, CN = saurabh-1.example.com
+verify error:num=18:self signed certificate
+verify return:1
+depth=0 C = US, ST = Test, L = Test, O = Hadoop, OU = Test, CN = saurabh-1.example.com
+verify return:1
+---
+Certificate chain
+ 0 s:/C=US/ST=Test/L=Test/O=Hadoop/OU=Test/CN=saurabh-1.example.com
+   i:/C=US/ST=Test/L=Test/O=Hadoop/OU=Test/CN=saurabh-1.example.com
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIICUjCCAbugAwIBAgIJAJ9wtt0t9BaiMA0GCSqGSIb3DQEBBQUAMGsxCzAJBgNV
+BAYTAlVTMQ0wCwYDVQQIEwRUZXN0MQ0wCwYDVQQHEwRUZXN0MQ8wDQYDVQQKEwZI
+YWRvb3AxDTALBgNVBAsTBFRlc3QxHjAcBgNVBAMTFXNhdXJhYmgtMS5leGFtcGxl
+LmNvbTAeFw0xOTA5MTgxMTE5NTlaFw0yMDA5MTcxMTE5NTlaMGsxCzAJBgNVBAYT
+AlVTMQ0wCwYDVQQIEwRUZXN0MQ0wCwYDVQQHEwRUZXN0MQ8wDQYDVQQKEwZIYWRv
+b3AxDTALBgNVBAsTBFRlc3QxHjAcBgNVBAMTFXNhdXJhYmgtMS5leGFtcGxlLmNv
+bTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAwWJWdSnIM0wKw3OrcQ5lkHMx
+AuFQ1hrUPIuXRTRcj4RTp8iw66MPNS6iOycPUSSaKpI5VBJoaAqSg3t/B05iFbmf
+5RzENSVYPeHcyDGn3aisVwOmmcarbtfC55wSNu4brhGvEBIOG81r5E0R52aeyuG1
+kPJ0OfqgDRw3zxP+VoMCAwEAATANBgkqhkiG9w0BAQUFAAOBgQBKbo9SxS10dc4A
+ma68cFlKNp5T7W/0pfxva47T0bG6eT4GhV4ArKcsZTWm/tQ7K103tIzkSonJbfI1
+Gh2ChCRf9gZTYj4RU8KfvjV1gq2bE6eMFCLAorIP75RGREZ48cKD2UMrGsMhCy3m
+OIZAPMOgs5x3ORnyC+eOD5QcpHfsXQ==
+-----END CERTIFICATE-----
+subject=/C=US/ST=Test/L=Test/O=Hadoop/OU=Test/CN=saurabh-1.example.com
+issuer=/C=US/ST=Test/L=Test/O=Hadoop/OU=Test/CN=saurabh-1.example.com
+---
+No client certificate CA names sent
+Peer signing digest: SHA512
+Server Temp Key: ECDH, P-256, 256 bits
+---
+SSL handshake has read 1010 bytes and written 471 bytes
+---
+New, TLSv1/SSLv3, Cipher is ECDHE-RSA-AES256-SHA384
+Server public key is 1024 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES256-SHA384
+    Session-ID: 5D8255188C4A8D5E8358F9930CB1284BF1B44786F5363DEDD9AB8869EDDFC703
+    Session-ID-ctx:
+    Master-Key: 845DBB8C36A921EDDEF28089B885C46BCFE724BB2F1EA91FC55BAB1DC8E58CB6A9B766CB4F52101F15A46BA8389D8065
+    Key-Arg   : None
+    Krb5 Principal: None
+    PSK identity: None
+    PSK identity hint: None
+    Start Time: 1568822552
+    Timeout   : 300 (sec)
+    Verify return code: 18 (self signed certificate)
+---
+^C
+[root@saurabh-ambari ~]#
+[root@saurabh-ambari ~]#
+[root@saurabh-ambari ~]#
+[root@saurabh-ambari ~]# ambari-server setup-sso
+Using python  /usr/bin/python
+Setting up SSO authentication properties...
+Enter Ambari Admin login: admin
+Enter Ambari Admin password:
+
+SSO is currently enabled
+Do you want to disable SSO authentication [y/n] (n)? n
+Provider URL (https://saurabh-1.example.com:8443/gateway/knoxsso/api/v1/websso):
+Public Certificate PEM (empty line to finish input):
+MIICUjCCAbugAwIBAgIJAJ9wtt0t9BaiMA0GCSqGSIb3DQEBBQUAMGsxCzAJBgNV
+BAYTAlVTMQ0wCwYDVQQIEwRUZXN0MQ0wCwYDVQQHEwRUZXN0MQ8wDQYDVQQKEwZI
+YWRvb3AxDTALBgNVBAsTBFRlc3QxHjAcBgNVBAMTFXNhdXJhYmgtMS5leGFtcGxl
+LmNvbTAeFw0xOTA5MTgxMTE5NTlaFw0yMDA5MTcxMTE5NTlaMGsxCzAJBgNVBAYT
+AlVTMQ0wCwYDVQQIEwRUZXN0MQ0wCwYDVQQHEwRUZXN0MQ8wDQYDVQQKEwZIYWRv
+b3AxDTALBgNVBAsTBFRlc3QxHjAcBgNVBAMTFXNhdXJhYmgtMS5leGFtcGxlLmNv
+bTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAwWJWdSnIM0wKw3OrcQ5lkHMx
+AuFQ1hrUPIuXRTRcj4RTp8iw66MPNS6iOycPUSSaKpI5VBJoaAqSg3t/B05iFbmf
+5RzENSVYPeHcyDGn3aisVwOmmcarbtfC55wSNu4brhGvEBIOG81r5E0R52aeyuG1
+kPJ0OfqgDRw3zxP+VoMCAwEAATANBgkqhkiG9w0BAQUFAAOBgQBKbo9SxS10dc4A
+ma68cFlKNp5T7W/0pfxva47T0bG6eT4GhV4ArKcsZTWm/tQ7K103tIzkSonJbfI1
+Gh2ChCRf9gZTYj4RU8KfvjV1gq2bE6eMFCLAorIP75RGREZ48cKD2UMrGsMhCy3m
+OIZAPMOgs5x3ORnyC+eOD5QcpHfsXQ==
+
+Use SSO for Ambari [y/n] (y)? y
+Manage SSO configurations for eligible services [y/n] (y)? n
+JWT Cookie name (hadoop-jwt):
+JWT audiences list (comma-separated), empty for any ():
+Ambari Server 'setup-sso' completed successfully.
+[root@saurabh-ambari ~]#
+[root@saurabh-ambari ~]#
+[root@saurabh-ambari ~]#
+[root@saurabh-ambari ~]# ambari-server restart
