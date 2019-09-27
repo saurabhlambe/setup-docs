@@ -1,5 +1,8 @@
 # Setting up Kubernetes
 
+1. Kubernetes setup includes a single Master node and multiple worker/slave nodes.
+2. In order to set up your Kubernetes cluster, spin up minimum 3 servers. Each with a minimum of 2 CPUs. And follow the procedure:
+
 **Note:** Run the first 10 commands on each host.
 
 1. The first thing that we are going to do is use SSH to log in to all machines. Once we have logged in, we need to elevate privileges using `sudo`.
