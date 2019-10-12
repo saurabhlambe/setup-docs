@@ -149,7 +149,7 @@ objectClass: organizationalUnit
 ou: Group
 
 ===
-
+```
 [root@c2232-node1 ~]# ldapadd -x -W -D "cn=ldapadm,dc=field,dc=hortonworks,dc=com" -f base.ldif
 Enter LDAP Password:
 adding new entry "dc=field,dc=hortonworks,dc=com"
@@ -159,7 +159,7 @@ adding new entry "cn=ldapadm,dc=field,dc=hortonworks,dc=com"
 adding new entry "ou=People,dc=field,dc=hortonworks,dc=com"
 
 adding new entry "ou=Group,dc=field,dc=hortonworks,dc=com"
-
+```
 ===
 
 ldapsearch -D "cn=ldapadm,dc=field,dc=hortonworks,dc=com" -wadmin -p 389 -h `hostname` -b "dc=field,dc=hortonworks,dc=com"
