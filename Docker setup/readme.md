@@ -1,4 +1,5 @@
 **Remove old versions**
+
 ```yum remove docker \
                   docker-client \
                   docker-client-latest \
