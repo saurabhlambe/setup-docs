@@ -1,5 +1,4 @@
-**Remove old versions**
-
+##Remove old versions
 ```
 yum remove docker \
        docker-client \
@@ -9,4 +8,9 @@ yum remove docker \
        docker-latest-logrotate \
        docker-logrotate \
        docker-engine
+```
+
+##Setup the repo
+```
+yum install -y yum-utils device-mapper-persistent-data lvm2
 ```
