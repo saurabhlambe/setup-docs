@@ -1,4 +1,4 @@
-##Remove old versions
+## Remove old versions
 ```
 yum remove docker \
        docker-client \
@@ -10,7 +10,7 @@ yum remove docker \
        docker-engine
 ```
 
-##Setup the repo
+## Setup the repo
 ```
 yum install -y yum-utils device-mapper-persistent-data lvm2
 ```
