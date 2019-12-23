@@ -75,7 +75,7 @@ includedir /etc/krb5.conf.d/
 
  support.com = SUPPORT.COM
 ```
-Note: comment the line starting with _default_ccache_name_ in above configs
+##### Note: comment the line starting with _default_ccache_name_ in above configs
 ---
 
 ### b. Edit kdc.conf and set the name of your realm, max tkt lifetime and max renew lifetime. Find sample kdc.conf here.
