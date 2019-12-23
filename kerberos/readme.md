@@ -185,7 +185,7 @@ kadmin.local:
 ### b. Create these principals with password “kerberos101”:
 
 - admin/admin 
-- your short username (e.g. vrathor) 
+- your short username (e.g. slambe) 
 - knox/<node2-fqdn>
 
 ```bash
