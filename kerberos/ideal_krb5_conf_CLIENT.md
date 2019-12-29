@@ -43,10 +43,6 @@
  .eng.com = ENG.COM
  eng.com = ENG.COM
 
- c2232-node1.squadron.support.hortonworks.com = ENG.COM
- c2232-node2.squadron.support.hortonworks.com = ENG.COM
- c2232-node3.squadron.support.hortonworks.com = ENG.COM
- c2232-node4.squadron.support.hortonworks.com = ENG.COM
  c1232-node1.squadron.support.hortonworks.com = SUP.COM
  c1232-node2.squadron.support.hortonworks.com = SUP.COM
  c1232-node3.squadron.support.hortonworks.com = SUP.COM
