@@ -62,7 +62,7 @@ includedir /etc/krb5.conf.d/
  rdns = false
  pkinit_anchors = /etc/pki/tls/certs/ca-bundle.crt
  default_realm = SUPPORT.COM
- default_ccache_name = KEYRING:persistent:%{uid}
+# default_ccache_name = KEYRING:persistent:%{uid}
 
 [realms]
  SUPPORT.COM = {
@@ -75,7 +75,7 @@ includedir /etc/krb5.conf.d/
 
  support.com = SUPPORT.COM
 ```
-
+##### Note: comment the line starting with _default_ccache_name_ in above configs
 ---
 
 ### b. Edit kdc.conf and set the name of your realm, max tkt lifetime and max renew lifetime. Find sample kdc.conf here.
@@ -185,7 +185,7 @@ kadmin.local:
 ### b. Create these principals with password “kerberos101”:
 
 - admin/admin 
-- your short username (e.g. vrathor) 
+- your short username (e.g. slambe) 
 - knox/<node2-fqdn>
 
 ```bash
