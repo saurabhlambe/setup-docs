@@ -1,0 +1,92 @@
+[root@saurabh-ad ~]# yum install openladap* -y
+
+[root@saurabh-ad ~]# systemctl  start slapd
+[root@saurabh-ad ~]# systemctl  enable slapd
+
+[root@saurabh-ad ~]# slappasswd
+New password: hadoop12345!
+Re-enter new password: hadoop12345!
+{SSHA}cnr5ZZ8qChB5AJcL0Z4DNdcYVd0IXNYk
+
+>> Create db.ldif file:
+[root@saurabh-ad ~]# vim db.ldif
+---
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcSuffix
+olcSuffix: dc=iron,dc=maiden,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcRootDN
+olcRootDN: cn=lemmyk,dc=iron,dc=maiden,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcRootPW
+olcRootPW: {SSHA}cnr5ZZ8qChB5AJcL0Z4DNdcYVd0IXNYk
+---
+
+>> Run this command:
+[root@saurabh-ad ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f db.ldif
+SASL/EXTERNAL authentication started
+SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+SASL SSF: 0
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+>> Edit monitor.ldif:
+[root@saurabh-ad ~]# vim monitor.ldif
+dn: olcDatabase={1}monitor,cn=config
+changetype: modify
+replace: olcAccess
+olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external, cn=auth" read by dn.base="cn=lemmyk,dc=iron,dc=maiden,dc=com" read by * none
+
+[root@saurabh-ad ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f monitor.ldif
+
+[root@saurabh-ad ~]# cp /usr/share/openldap-servers/DB_CONFIG.example  /var/lib/ldap/DB_CONFIG
+[root@saurabh-ad ~]# chown ldap:ldap /var/lib/ldap/*
+
+[root@saurabh-ad ~]# ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
+SASL/EXTERNAL authentication started
+SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+SASL SSF: 0
+adding new entry "cn=cosine,cn=schema,cn=config"
+
+[root@saurabh-ad ~]# ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
+SASL/EXTERNAL authentication started
+SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+SASL SSF: 0
+adding new entry "cn=nis,cn=schema,cn=config"
+
+[root@saurabh-ad ~]# ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+SASL/EXTERNAL authentication started
+SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+SASL SSF: 0
+adding new entry "cn=inetorgperson,cn=schema,cn=config"
+
+[root@saurabh-ad ~]# vim base.ldif
+dn: dc=iron,dc=maiden,dc=com
+dc: iron
+objectClass: top
+objectClass: domain
+
+dn: cn=lemmyk,dc=iron,dc=maiden,dc=com
+objectClass: organizationalRole
+cn: lemmyk
+description: LDAP Manager
+
+dn: ou=People,dc=iron,dc=maiden,dc=com
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Group,dc=iron,dc=maiden,dc=com
+objectClass: organizationalUnit
+ou: Group
+
+[root@saurabh-ad ~]# ldapadd -x -W -D "cn=lemmyk,dc=iron,dc=maiden,dc=com" -f base.ldif
+
+[root@saurabh-ad ~]# ldapsearch -D cn=lemmyk,dc=iron,dc=maiden,dc=com -W -b dc=iron,dc=maiden,dc=com objectClass=*
