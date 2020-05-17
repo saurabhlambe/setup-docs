@@ -75,7 +75,7 @@ adding new entry "cn=inetorgperson,cn=schema,cn=config"
 ```
 
 ### 3. Add your domain in the LDAP database
-#### 3.1. Create ldif file 
+#### 3.1. Create ldif file
 ```bash
 cat ldapdomain.ldif
 --
@@ -126,8 +126,10 @@ modifying entry "olcDatabase={2}hdb,cn=config"
 
 ```
 
-### 4. Add some entries to our LDAP directory.
-#### 4.1. Create ldif file
+## IV. Create new users, groups, and user-group mappings
+
+### 1. Add some entries to our LDAP directory.
+#### 1.1. Create ldif file
 ```bash
 cat baseldapdomain.ldif
 --
@@ -151,13 +153,13 @@ dn: ou=Group,dc=ironmaiden,dc=com
 objectClass: organizationalUnit
 ou: Group
 ```
-#### 4.2. Add above entries to LDAP directory
+#### 1.2. Add above entries to LDAP directory
 ```bash
 ldapadd  -x -D cn=admin,dc=ironmaiden,dc=com -W -f baseldapdomain.ldif
 ```
 
-### 5. Create a new LDAP user
-#### 5.1. Create ldif file
+### 2. Create a new LDAP user
+#### 2.1. Create ldif file
 ```bash
 cat add_user_with_password.ldif
 --
@@ -179,13 +181,13 @@ gidNumber: 1006
 homeDirectory: /home/lionel
 userPassword: {SSHA}eB9CAYFoQ3YzJ3A49nSgt0udeveEWMoj
 ```
-#### 5.2. Run ldapadd command
+#### 2.2. Run ldapadd command
 ```bash
 ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f add_user_with_passwd.ldif
 ```
 
-### 6. Create new LDAP group
-#### 6.1. Create ldif file
+### 3. Create new LDAP group
+#### 3.1. Create ldif file
 ```bash
 cat group_add.ldif
 --
@@ -196,13 +198,13 @@ cn: support
 gidNumber: 1008
 description: "HR team group"
 ```
-### 6.2. Push ldif file
+### 3.2. Push ldif file
 ```bash
 ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f add_user_with_passwd.ldif
 ```
 
-### 7. Add a user to a group
-#### 7.1. Create ldif file
+### 4. Add a user to a group
+#### 4.1. Create ldif file
 ```bash
 cat group_mod.ldif
 --
@@ -211,7 +213,7 @@ changetype: modify
 add: memberUid
 memberUid: <UID1>
 ```
-#### 7.2. Push changes using ldapmodify command
+#### 4.2. Push changes using ldapmodify command
 ```bash
 ldapmodify -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f group_mod.ldif
 ```
