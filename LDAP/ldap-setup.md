@@ -198,7 +198,7 @@ cn: support
 gidNumber: 1008
 description: "HR team group"
 ```
-### 3.2. Push ldif file
+#### 3.2. Push ldif file
 ```bash
 ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f add_user_with_passwd.ldif
 ```
