@@ -24,17 +24,16 @@ Re-enter new password:
 
 ### 2. Create LDIF file
 ```bash
-vim ldaprootpasswd.ldif
+cat ldaprootpasswd.ldif
 --
 dn: olcDatabase={0}config,cn=config
 changetype: modify
 add: olcRootPW
 olcRootPW: {SSHA}Ar1nsZgFrUeql5aWZwvHUXcQ0BaHpO5w
---
 ```
-    olcDatabase: indicates a specific database instance name and can be typically found inside /etc/openldap/slapd.d/cn=config.
-    cn=config: indicates global config options.
-    PASSWORD: is the hashed string obtained while creating the administrative user.
+> olcDatabase: indicates a specific database instance name and can be typically found inside /etc/openldap/slapd.d/cn=config.
+cn=config: indicates global config options.
+PASSWORD: is the hashed string obtained while creating the administrative user.
 
 ### 3. Add the corresponding LDAP entry by specifying the URI referring to the ldap server and the file above.
 ```bash
@@ -75,10 +74,11 @@ SASL SSF: 0
 adding new entry "cn=inetorgperson,cn=schema,cn=config"
 ```
 
-### 3 Add your domain in the LDAP database
+### 3. Add your domain in the LDAP database
+#### 3.1. Create ldif file 
 ```bash
-vim ldapdomain.ldif
----
+cat ldapdomain.ldif
+--
 dn: olcDatabase={1}monitor,cn=config
 changetype: modify
 replace: olcAccess
@@ -107,10 +107,8 @@ olcAccess: {0}to attrs=userPassword,shadowLastChange by
   dn="cn=admin,dc=ironmaiden,dc=com" write by anonymous auth by self write by * none
 olcAccess: {1}to dn.base="" by * read
 olcAccess: {2}to * by dn="cn=admin,dc=ironmaiden,dc=com" write by * read
----
 ```
-
-### 4. Add the above configuration to the LDAP database
+#### 3.2. Add the above configuration to the LDAP database
 ```bash
 ldapmodify -Y EXTERNAL -H ldapi:/// -f ldapdomain.ldif
 SASL/EXTERNAL authentication started
@@ -128,10 +126,11 @@ modifying entry "olcDatabase={2}hdb,cn=config"
 
 ```
 
-### 5. Add some entries to our LDAP directory.
+### 4. Add some entries to our LDAP directory.
+#### 4.1. Create ldif file
 ```bash
-vim baseldapdomain.ldif
----
+cat baseldapdomain.ldif
+--
 dn: dc=ironmaiden,dc=com
 objectClass: top
 objectClass: dcObject
@@ -151,18 +150,17 @@ ou: People
 dn: ou=Group,dc=ironmaiden,dc=com
 objectClass: organizationalUnit
 ou: Group
----
 ```
-
-### 6. Add above entries to LDAP directory:
+#### 4.2. Add above entries to LDAP directory
 ```bash
 ldapadd  -x -D cn=admin,dc=ironmaiden,dc=com -W -f baseldapdomain.ldif
 ```
 
-### 7. Create a new LDAP user
-#### 7.1. Create ldif file
+### 5. Create a new LDAP user
+#### 5.1. Create ldif file
 ```bash
 cat add_user_with_password.ldif
+--
 dn: uid=lionel,ou=People,dc=ironmaiden,dc=com
 uid: lionel
 cn: lionel
@@ -181,15 +179,16 @@ gidNumber: 1006
 homeDirectory: /home/lionel
 userPassword: {SSHA}eB9CAYFoQ3YzJ3A49nSgt0udeveEWMoj
 ```
-#### 7.2. Run ldapadd command
+#### 5.2. Run ldapadd command
 ```bash
 ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f add_user_with_passwd.ldif
 ```
 
-### 8. Create new LDAP group
-#### 8.1. Create ldif file
+### 6. Create new LDAP group
+#### 6.1. Create ldif file
 ```bash
 cat group_add.ldif
+--
 dn: cn=hr,ou=Group,dc=ironmaiden,dc=com
 objectClass: posixGroup
 objectClass: top
@@ -197,21 +196,22 @@ cn: support
 gidNumber: 1008
 description: "HR team group"
 ```
-### 8.2. Push ldif file
+### 6.2. Push ldif file
 ```bash
 ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f add_user_with_passwd.ldif
 ```
 
-### 9. Add a user to a group
-#### 9.1. Create ldif file
+### 7. Add a user to a group
+#### 7.1. Create ldif file
 ```bash
 cat group_mod.ldif
+--
 dn: cn=hr,ou=Group,dc=your,dc=domain
 changetype: modify
 add: memberUid
 memberUid: <UID1>
 ```
-#### 9.2. Push changes using ldapmodify command
+#### 7.2. Push changes using ldapmodify command
 ```bash
 ldapmodify -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f group_mod.ldif
 ```
