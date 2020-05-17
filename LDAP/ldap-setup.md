@@ -1,9 +1,5 @@
 # LDAP installation CentOS-7
 
-> References\n
-https://simp.readthedocs.io/en/master/getting_started_guide/Just_Install.html\n
-https://www.tecmint.com/install-openldap-server-for-centralized-authentication
-
 ## I. Install LDAP server
 
 ### 1. Install OpenLDAP packages
@@ -221,3 +217,7 @@ memberUid: uid=tom,ou=People,dc=ironmaiden,dc=com
 ```bash
 ldapmodify -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f group_mod.ldif
 ```
+
+## References
+[TecMint](https://www.tecmint.com/install-openldap-server-for-centralized-authentication How To Install OpenLDAP Server for Centralized Authentication)
+[SIMP Documentation](https://simp.readthedocs.io/en/master/user_guide/User_Management.html User Management)
