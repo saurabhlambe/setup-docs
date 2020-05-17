@@ -219,5 +219,5 @@ ldapmodify -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f group_mod.ldif
 ```
 
 ## References
-[TecMint](https://www.tecmint.com/install-openldap-server-for-centralized-authentication How To Install OpenLDAP Server for Centralized Authentication)
-[SIMP Documentation](https://simp.readthedocs.io/en/master/user_guide/User_Management.html User Management)
+[TecMint](https://www.tecmint.com/install-openldap-server-for-centralized-authentication "How To Install OpenLDAP Server for Centralized Authentication")
+[SIMP Documentation](https://simp.readthedocs.io/en/master/user_guide/User "Management.html User Management")
