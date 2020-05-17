@@ -1,165 +1,217 @@
-https://community.cloudera.com/t5/Community-Articles/How-to-setup-OpenLDAP-2-4-on-CentOS-7/ta-p/249263
+# LDAP installation CentOS-7
 
-===
+## I. Install LDAP server
 
-admin
-{SSHA}3RnwgaKrBeM4SHfZ8KIo03uW5EkvMKOw
+### 1. Install OpenLDAP packages:
+```bash
+yum install -y openldap openldap-servers openldap-clients
+```
 
-===
+### 2. Start slapd service
+```bash
+systemctl start slapd
+```
 
-dn: olcDatabase={2}hdb,cn=config
+## II. Configure LDAP server
+
+### 1. Set password for admin user:
+```bash
+slappasswd
+New password:
+Re-enter new password:
+{SSHA}Ar1nsZgFrUeql5aWZwvHUXcQ0BaHpO5w
+```
+
+### 2. Create LDIF file
+```bash
+vim ldaprootpasswd.ldif
+--
+dn: olcDatabase={0}config,cn=config
 changetype: modify
-replace: olcSuffix
-olcSuffix: dc=field,dc=hortonworks,dc=com
+add: olcRootPW
+olcRootPW: {SSHA}Ar1nsZgFrUeql5aWZwvHUXcQ0BaHpO5w
+--
+```
+    olcDatabase: indicates a specific database instance name and can be typically found inside /etc/openldap/slapd.d/cn=config.
+    cn=config: indicates global config options.
+    PASSWORD: is the hashed string obtained while creating the administrative user.
 
-dn: olcDatabase={2}hdb,cn=config
-changetype: modify
-replace: olcRootDN
-olcRootDN: cn=ldapadm,dc=field,dc=hortonworks,dc=com
-
-dn: olcDatabase={2}hdb,cn=config
-changetype: modify
-replace: olcRootPW
-olcRootPW: {SSHA}3RnwgaKrBeM4SHfZ8KIo03uW5EkvMKOw
-
-===
-
-[root@c2232-node1 ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f db.ldif
+### 3. Add the corresponding LDAP entry by specifying the URI referring to the ldap server and the file above.
+```bash
+ldapadd -Y EXTERNAL -H ldapi:/// -f ldaprootpasswd.ldif
 SASL/EXTERNAL authentication started
 SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
 SASL SSF: 0
-modifying entry "olcDatabase={2}hdb,cn=config"
+modifying entry "olcDatabase={0}config,cn=config"
+```
 
-modifying entry "olcDatabase={2}hdb,cn=config"
+## III. Configure LDAP database
 
-modifying entry "olcDatabase={2}hdb,cn=config"
+### 1. Copy the sample database configuration file for slapd into the /var/lib/ldap directory
+```bash
+cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
+chown -R ldap:ldap /var/lib/ldap/DB_CONFIG
+systemctl restart slapd
+```
 
-===
-
-[root@c2232-node1 ~]# cat monitor.ldif
-dn: olcDatabase={1}monitor,cn=config
-changetype: modify
-replace: olcAccess
-olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external, cn=auth" read by dn.base="cn=ldapadm,dc=field,dc=hortonworks,dc=com" read by * none
-
-===
-
-[root@c2232-node1 ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f monitor.ldif
-SASL/EXTERNAL authentication started
-SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
-SASL SSF: 0
-modifying entry "olcDatabase={1}monitor,cn=config"
-
-===
-
-[root@c2232-node1 ~]# openssl req -new -x509 -nodes -out /etc/openldap/certs/myldap.field.hortonworks.com.cert -keyout /etc/openldap/certs/myldap.field.hortonworks.com.key -days 365
-
-===
-
-Country Name (2 letter code) [XX]:IN
-State or Province Name (full name) []:
-Locality Name (eg, city) [Default City]:Bangalore
-Organization Name (eg, company) [Default Company Ltd]:Cloudera
-Organizational Unit Name (eg, section) []:
-Common Name (eg, your name or your server's hostname) []:
-Email Address []:
-
-===
-
-chown ldap:ldap /etc/openldap/certs/myldap.field.hortonworks.com.cert
-chown ldap:ldap /etc/openldap/certs/myldap.field.hortonworks.com.key
-
-===
-
-[root@c2232-node1 ~]# vim certs.ldif
-
-dn: cn=config
-changetype: modify
-replace: olcTLSCertificateFile
-olcTLSCertificateFile: /etc/openldap/certs/myldap.field.hortonworks.com.cert
-
-dn: cn=config
-changetype: modify
-replace: olcTLSCertificateKeyFile
-olcTLSCertificateKeyFile: /etc/openldap/certs/myldap.field.hortonworks.com.key
-
-===
-
-[root@c2232-node1 ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f certs.ldif
-SASL/EXTERNAL authentication started
-SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
-SASL SSF: 0
-modifying entry "cn=config"
-ldap_modify: Other (e.g., implementation specific) error (80)
-
-===
-
-[root@c2232-node1 ~]# slaptest -u
-config file testing succeeded
-
-===
-
-[root@c2232-node1 ~]# cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
-
-[root@c2232-node1 ~]# chown ldap:ldap /var/lib/ldap/*
-
-===
-
-[root@c2232-node1 ~]# ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
+### 2. Import basic LDAP schemas from /etc/openldap/schema
+```bash
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
 SASL/EXTERNAL authentication started
 SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
 SASL SSF: 0
 adding new entry "cn=cosine,cn=schema,cn=config"
 
-===
-
-[root@c2232-node1 ~]# ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
 SASL/EXTERNAL authentication started
 SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
 SASL SSF: 0
 adding new entry "cn=nis,cn=schema,cn=config"
 
-===
-
-[root@c2232-node1 ~]# ldapadd  -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
 SASL/EXTERNAL authentication started
 SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
 SASL SSF: 0
 adding new entry "cn=inetorgperson,cn=schema,cn=config"
+```
 
-===
+### 3 Add your domain in the LDAP database
+```bash
+vim ldapdomain.ldif
+---
+dn: olcDatabase={1}monitor,cn=config
+changetype: modify
+replace: olcAccess
+olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth"
+  read by dn.base="cn=admin,dc=ironmaiden,dc=com" read by * none
 
-[root@c2232-node1 ~]# cat base.ldif
-dn: dc=field,dc=hortonworks,dc=com
-dc: field
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcSuffix
+olcSuffix: dc=ironmaiden,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcRootDN
+olcRootDN: cn=admin,dc=ironmaiden,dc=com
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+add: olcRootPW
+olcRootPW: {SSHA}Ar1nsZgFrUeql5aWZwvHUXcQ0BaHpO5w
+
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+add: olcAccess
+olcAccess: {0}to attrs=userPassword,shadowLastChange by
+  dn="cn=admin,dc=ironmaiden,dc=com" write by anonymous auth by self write by * none
+olcAccess: {1}to dn.base="" by * read
+olcAccess: {2}to * by dn="cn=admin,dc=ironmaiden,dc=com" write by * read
+---
+```
+
+### 4. Add the above configuration to the LDAP database
+```bash
+ldapmodify -Y EXTERNAL -H ldapi:/// -f ldapdomain.ldif
+SASL/EXTERNAL authentication started
+SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+SASL SSF: 0
+modifying entry "olcDatabase={1}monitor,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+
+```
+
+### 5. Add some entries to our LDAP directory.
+```bash
+vim baseldapdomain.ldif
+---
+dn: dc=ironmaiden,dc=com
 objectClass: top
-objectClass: domain
+objectClass: dcObject
+objectclass: organization
+o: ironmaiden com
+dc: ironmaiden
 
-dn: cn=ldapadm,dc=field,dc=hortonworks,dc=com
+dn: cn=admin,dc=ironmaiden,dc=com
 objectClass: organizationalRole
-cn: ldapadm
-description: LDAP Manager
+cn: admin
+description: Directory admin
 
-dn: ou=People,dc=field,dc=hortonworks,dc=com
+dn: ou=People,dc=ironmaiden,dc=com
 objectClass: organizationalUnit
 ou: People
 
-dn: ou=Group,dc=field,dc=hortonworks,dc=com
+dn: ou=Group,dc=ironmaiden,dc=com
 objectClass: organizationalUnit
 ou: Group
-
-===
+---
 ```
-[root@c2232-node1 ~]# ldapadd -x -W -D "cn=ldapadm,dc=field,dc=hortonworks,dc=com" -f base.ldif
-Enter LDAP Password:
-adding new entry "dc=field,dc=hortonworks,dc=com"
 
-adding new entry "cn=ldapadm,dc=field,dc=hortonworks,dc=com"
-
-adding new entry "ou=People,dc=field,dc=hortonworks,dc=com"
-
-adding new entry "ou=Group,dc=field,dc=hortonworks,dc=com"
+### 6. Add above entries to LDAP directory:
+```bash
+ldapadd  -x -D cn=admin,dc=ironmaiden,dc=com -W -f baseldapdomain.ldif
 ```
-===
 
-ldapsearch -D "cn=ldapadm,dc=field,dc=hortonworks,dc=com" -wadmin -p 389 -h `hostname` -b "dc=field,dc=hortonworks,dc=com"
+### 7. Create a new LDAP user
+#### 7.1. Create ldif file
+```bash
+cat add_user_with_password.ldif
+dn: uid=lionel,ou=People,dc=ironmaiden,dc=com
+uid: lionel
+cn: lionel
+givenName: Lionel
+sn: Messi
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: top
+objectClass: shadowAccount
+shadowLastChange: 0
+shadowMax: 0
+shadowWarning: 0
+loginShell: /bin/bash
+uidNumber: 2003
+gidNumber: 1006
+homeDirectory: /home/lionel
+userPassword: {SSHA}eB9CAYFoQ3YzJ3A49nSgt0udeveEWMoj
+```
+#### 7.2. Run ldapadd command
+```bash
+ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f add_user_with_passwd.ldif
+```
+
+### 8. Create new LDAP group
+#### 8.1. Create ldif file
+```bash
+cat group_add.ldif
+dn: cn=hr,ou=Group,dc=ironmaiden,dc=com
+objectClass: posixGroup
+objectClass: top
+cn: support
+gidNumber: 1008
+description: "HR team group"
+```
+### 8.2. Push ldif file
+```bash
+ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f add_user_with_passwd.ldif
+```
+
+### 9. Add a user to a group
+#### 9.1. Create ldif file
+```bash
+cat group_mod.ldif
+dn: cn=hr,ou=Group,dc=your,dc=domain
+changetype: modify
+add: memberUid
+memberUid: <UID1>
+```
+#### 9.2. Push changes using ldapmodify command
+```bash
+ldapmodify -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f group_mod.ldif
+```
