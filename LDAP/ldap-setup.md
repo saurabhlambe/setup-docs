@@ -1,7 +1,7 @@
 # LDAP installation CentOS-7
 
-> References
-https://simp.readthedocs.io/en/master/getting_started_guide/Just_Install.html
+> References\n
+https://simp.readthedocs.io/en/master/getting_started_guide/Just_Install.html\n
 https://www.tecmint.com/install-openldap-server-for-centralized-authentication
 
 ## I. Install LDAP server
