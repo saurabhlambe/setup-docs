@@ -2,7 +2,7 @@
 
 ## I. Install LDAP server
 
-### 1. Install OpenLDAP packages:
+### 1. Install OpenLDAP packages
 ```bash
 yum install -y openldap openldap-servers openldap-clients
 ```
@@ -14,7 +14,7 @@ systemctl start slapd
 
 ## II. Configure LDAP server
 
-### 1. Set password for admin user:
+### 1. Set password for admin user
 ```bash
 slappasswd
 New password:
@@ -35,7 +35,7 @@ olcRootPW: {SSHA}Ar1nsZgFrUeql5aWZwvHUXcQ0BaHpO5w
 cn=config: indicates global config options.
 PASSWORD: is the hashed string obtained while creating the administrative user.
 
-### 3. Add the corresponding LDAP entry by specifying the URI referring to the ldap server and the file above.
+### 3. Add the corresponding LDAP entry by specifying the URI referring to the ldap server and the file above
 ```bash
 ldapadd -Y EXTERNAL -H ldapi:/// -f ldaprootpasswd.ldif
 SASL/EXTERNAL authentication started
@@ -128,7 +128,7 @@ modifying entry "olcDatabase={2}hdb,cn=config"
 
 ## IV. Create new users, groups, and user-group mappings
 
-### 1. Add some entries to our LDAP directory.
+### 1. Add some entries to the LDAP directory
 #### 1.1. Create ldif file
 ```bash
 cat baseldapdomain.ldif
@@ -211,7 +211,7 @@ cat group_mod.ldif
 dn: cn=hr,ou=Group,dc=your,dc=domain
 changetype: modify
 add: memberUid
-memberUid: <UID1>
+memberUid: uid=tom,ou=People,dc=ironmaiden,dc=com
 ```
 #### 4.2. Push changes using ldapmodify command
 ```bash
