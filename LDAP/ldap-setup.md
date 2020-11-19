@@ -200,7 +200,7 @@ description: "HR team group"
 ```
 #### 3.2. Push ldif file
 ```bash
-ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f add_user_with_passwd.ldif
+ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f group_add.ldif
 ```
 
 ### 4. Add a user to a group
