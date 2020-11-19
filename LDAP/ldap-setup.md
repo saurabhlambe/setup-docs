@@ -211,7 +211,7 @@ cat group_mod.ldif
 dn: cn=hr,ou=Group,dc=ironmaiden,dc=domain
 changetype: modify
 add: memberUid
-memberUid: uid=tom,ou=People,dc=ironmaiden,dc=com
+memberUid: uid=lionel,ou=People,dc=ironmaiden,dc=com
 ```
 #### 4.2. Push changes using ldapmodify command
 ```bash
