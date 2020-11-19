@@ -194,7 +194,7 @@ cat group_add.ldif
 dn: cn=hr,ou=Group,dc=ironmaiden,dc=com
 objectClass: posixGroup
 objectClass: top
-cn: support
+cn: hr
 gidNumber: 1008
 description: "HR team group"
 ```
