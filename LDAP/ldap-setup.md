@@ -208,7 +208,7 @@ ldapadd -Z -x -W -D "cn=admin,dc=ironmaiden,dc=com" -f group_add.ldif
 ```bash
 cat group_mod.ldif
 --
-dn: cn=hr,ou=Group,dc=your,dc=domain
+dn: cn=hr,ou=Group,dc=ironmaiden,dc=domain
 changetype: modify
 add: memberUid
 memberUid: uid=tom,ou=People,dc=ironmaiden,dc=com
