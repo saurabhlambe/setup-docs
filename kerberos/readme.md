@@ -43,8 +43,6 @@ total 0
 #### a. Edit krb5.conf and set the name of your realm, kdc and kadmin hostnames, domain to realm mapping. Find sample krb5.conf here.
 
 ```bash
-[root@c4232-node1 ~]# cat /etc/krb5.conf
-
 # Configuration snippets may be placed in this directory as well
 
 includedir /etc/krb5.conf.d/
