@@ -41,7 +41,9 @@ total 0
 ## 3. Next, lets configure the Kerberos Server (ensure that you read about each config parameter as you do these steps):
 
 #### a. Edit krb5.conf and set the name of your realm, kdc and kadmin hostnames, domain to realm mapping. Find sample krb5.conf here.
-
+```bash
+vim /etc/krb5.conf
+```
 ```bash
 # Configuration snippets may be placed in this directory as well
 
@@ -77,10 +79,10 @@ includedir /etc/krb5.conf.d/
 ---
 
 ### b. Edit kdc.conf and set the name of your realm, max tkt lifetime and max renew lifetime. Find sample kdc.conf here.
-
 ```bash
-# cat /var/kerberos/krb5kdc/kdc.conf
-
+vim /var/kerberos/krb5kdc/kdc.conf
+```
+```bash
 [kdcdefaults]
  kdc_ports = 88
  kdc_tcp_ports = 88
@@ -99,10 +101,10 @@ includedir /etc/krb5.conf.d/
 ```
 
 ### c. Edit kadm5.acl file and set the name of your realm.
-
 ```bash
-# cat /var/kerberos/krb5kdc/kadm5.acl
-
+vim /var/kerberos/krb5kdc/kadm5.acl
+```
+```bash
 */admin@SUPPORT.COM	*
 ```
 
