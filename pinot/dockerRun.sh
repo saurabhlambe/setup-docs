@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "This script assumes you have Docker engine installed and running. If not, please refer to https://docs.docker.com/engine/"
 echo "Acquiring the latest Pinot image from https://github.com/apache/pinot"
 docker pull apachepinot/pinot:latest-arm64 >> /dev/null 2>&1
 sleep 2
