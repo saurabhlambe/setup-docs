@@ -31,7 +31,7 @@ if ! command -v brew &> /dev/null; then
     echo
     exit 1
   fi
-
+    echo "added another line that does nothing"
   if [ -z "${HOMEBREW_INSTALLER_SHA256:-}" ]; then
     echo
     print_info "❗ HOMEBREW_INSTALLER_SHA256 is not set. Refusing to run automated installer."
