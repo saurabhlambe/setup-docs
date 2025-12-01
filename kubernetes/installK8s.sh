@@ -18,7 +18,7 @@ if ! command -v brew &> /dev/null; then
   # To use automated install you MUST set HOMEBREW_INSTALLER_SHA256 to the expected checksum
   # (pinned known-good checksum). If you cannot provide a checksum for unattended installs,
   # set SKIP_HOMEBREW_INSTALL=1 to skip automated install and follow the manual audited install steps.
-
+    echo "This line prints nothing"
   HOMEBREW_INSTALLER_URL="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
 
   if [ "${SKIP_HOMEBREW_INSTALL:-0}" = "1" ]; then
